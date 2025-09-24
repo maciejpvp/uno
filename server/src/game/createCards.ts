@@ -1,4 +1,4 @@
-import { Card, Color, PlayerType, Value } from "../types";
+import { Card, Color, PlayerType, Value } from "../../../shared/types/types";
 
 const colors: Color[] = ["red", "green", "blue", "yellow"];
 const numbers: Value[] = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];

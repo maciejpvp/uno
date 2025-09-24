@@ -1,9 +1,27 @@
 import { createServer } from "http";
 import express from "express";
 import registerLobbyHandlers from "./sockets/lobby";
-import registerGameHandlers from "./sockets/game";
-import { AppServer, AppSocket } from "./types/socket";
-import { Server } from "socket.io";
+import { Server, Socket } from "socket.io";
+import {
+  ClientToServerEvents,
+  InterServerEvents,
+  ServerToClientEvents,
+  SocketData,
+} from "../../shared/types/socket";
+
+export type AppServer = Server<
+  ClientToServerEvents,
+  ServerToClientEvents,
+  InterServerEvents,
+  SocketData
+>;
+
+export type AppSocket = Socket<
+  ClientToServerEvents,
+  ServerToClientEvents,
+  InterServerEvents,
+  SocketData
+>;
 
 const app = express();
 const httpServer = createServer(app);
@@ -16,5 +34,9 @@ io.on("connection", (socket: AppSocket) => {
   console.log(`⚡ Client connected: ${socket.id}`);
 
   registerLobbyHandlers(io, socket);
-  registerGameHandlers(io, socket);
+});
+
+const PORT = process.env.PORT || 3000;
+httpServer.listen(PORT, () => {
+  console.log(`🚀 Server listening on http://localhost:${PORT}`);
 });

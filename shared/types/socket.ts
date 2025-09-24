@@ -1,13 +1,18 @@
-import { Server, Socket } from "socket.io";
-import { LobbyType, PlayerType } from "../types";
+import { Card, LobbyType, PlayerType } from "./types";
 
 export interface ServerToClientEvents {
-  lobbyStart: () => void;
+  lobbyStart: (data: { hand: Card[]; pile: Card; currentTurn: number }) => void;
   playerJoined: (player: PlayerType) => void;
 }
 
 export interface ClientToServerEvents {
-  createLobby: () => void;
+  createLobby: (
+    callback: (
+      res:
+        | { success: true; data: LobbyType }
+        | { success: false; message: string },
+    ) => void,
+  ) => void;
   joinLobby: (
     code: number,
     callback: (
@@ -26,17 +31,3 @@ export interface InterServerEvents {
 export interface SocketData {
   userId?: string;
 }
-
-export type AppServer = Server<
-  ClientToServerEvents,
-  ServerToClientEvents,
-  InterServerEvents,
-  SocketData
->;
-
-export type AppSocket = Socket<
-  ClientToServerEvents,
-  ServerToClientEvents,
-  InterServerEvents,
-  SocketData
->;
