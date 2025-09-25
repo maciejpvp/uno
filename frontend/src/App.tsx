@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 import { useSocketStore } from "./store/socketStore";
 import CodeInput from "./components/CodeInput";
+import { GameBackground } from "./components/Background";
+import { CreateLobbyButton } from "./components/CreateLobbyButton";
 
 export const App = () => {
   const socket = useSocketStore((store) => store.socket);
@@ -18,14 +20,6 @@ export const App = () => {
     //eslint-disable-next-line
   }, []);
 
-  const handleCreateLobby = () => {
-    if (!socket?.active) return;
-
-    socket.emit("createLobby", (res) => {
-      console.log(res);
-    });
-  };
-
   const handleJoinLobby = (val: number) => {
     if (!socket?.active) return;
 
@@ -35,27 +29,18 @@ export const App = () => {
   };
 
   return (
-    <div className="bg-violet-900 w-screen h-screen flex justify-center items-center relative">
-      <div className="flex flex-col gap-6 items-center w-full max-w-sm">
-        <div className="flex flex-col gap-2 items-center">
-          <label className="text-violet-300 text-sm font-medium">
-            Enter Game Code
-          </label>
-          <CodeInput callback={(val) => handleJoinLobby(Number(val))} />
+    <div>
+      <GameBackground />
+      <div className="w-screen h-screen flex justify-center items-center relative">
+        <div className="flex flex-col gap-5 items-center">
+          <div className="flex flex-col gap-2 justify-center items-center">
+            <label className="text-violet-300 text-sm font-medium">
+              Enter Game Code
+            </label>
+            <CodeInput callback={(val) => handleJoinLobby(Number(val))} />
+          </div>
+          <CreateLobbyButton />
         </div>
-
-        <button
-          onClick={handleCreateLobby}
-          className="
-        text-violet-100 text-sm font-medium
-        px-5 py-2.5 rounded-lg
-        border border-violet-400/40
-        hover:border-violet-300 hover:bg-violet-800/40
-        transition-colors
-      "
-        >
-          Create a new game
-        </button>
       </div>
     </div>
   );
