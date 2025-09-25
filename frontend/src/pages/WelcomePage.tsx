@@ -1,5 +1,6 @@
 import CodeInput from "../components/CodeInput";
 import { CreateLobbyButton } from "../components/CreateLobbyButton";
+import { useGameStore } from "../store/gameStore";
 import { useSocketStore } from "../store/socketStore";
 
 export const WelcomePage = () => {
@@ -9,7 +10,19 @@ export const WelcomePage = () => {
     if (!socket?.active) return;
 
     socket.emit("joinLobby", val, (res) => {
-      console.log(res);
+      if (!res.success) return;
+
+      const lobby = res.data;
+
+      const state = useGameStore.getState();
+
+      state.setInGame(true);
+      state.setCode(lobby.code);
+      state.setOwnerId(lobby.ownerId);
+      state.setPlayers(
+        lobby.players.map((p) => ({ id: p.id, username: p.username })),
+      );
+      state.setStatus(lobby.status);
     });
   };
 
