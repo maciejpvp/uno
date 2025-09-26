@@ -8,6 +8,7 @@ import {
   ServerToClientEvents,
   SocketData,
 } from "../../shared/types/socket";
+import registerGameHandlers from "./sockets/game";
 
 export type AppServer = Server<
   ClientToServerEvents,
@@ -34,6 +35,7 @@ io.on("connection", (socket: AppSocket) => {
   console.log(`⚡ Client connected: ${socket.id}`);
 
   registerLobbyHandlers(io, socket);
+  registerGameHandlers(io, socket);
 });
 
 const PORT = process.env.PORT || 3000;

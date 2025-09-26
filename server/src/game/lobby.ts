@@ -49,6 +49,8 @@ export const joinLobby = ({
 
   io.to(lobby.id).emit("playerJoined", player);
 
+  socket.join(lobby.id);
+
   // Add player
   lobby.players.push(player);
 
