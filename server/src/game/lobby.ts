@@ -71,6 +71,8 @@ export const startLobby = ({
 
   if (!lobby) return;
 
+  if (lobby.status === "playing") return;
+
   if (lobby.ownerId !== playerId) return;
 
   const { drawPile, updatedPlayers } = createCards(lobby.players);

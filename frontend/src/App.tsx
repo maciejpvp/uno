@@ -4,6 +4,7 @@ import { GameBackground } from "./components/Background";
 import { WelcomePage } from "./pages/WelcomePage";
 import { useGameStore } from "./store/gameStore";
 import { LobbyPage } from "./pages/LobbyPage";
+import { GamePage } from "./pages/GamePage";
 
 export const App = () => {
   const socket = useSocketStore((store) => store.socket);
@@ -11,6 +12,7 @@ export const App = () => {
   const disconnect = useSocketStore((store) => store.disconnect);
 
   const inGame = useGameStore((store) => store.inGame);
+  const status = useGameStore((store) => store.status);
 
   useEffect(() => {
     if (socket?.connected) return;
@@ -27,7 +29,15 @@ export const App = () => {
     <>
       <GameBackground />
       <div className="w-screen h-screen flex justify-center items-center relative">
-        {inGame ? <LobbyPage /> : <WelcomePage />}
+        {inGame ? (
+          status === "waiting" ? (
+            <LobbyPage />
+          ) : (
+            <GamePage />
+          )
+        ) : (
+          <WelcomePage />
+        )}
       </div>
     </>
   );

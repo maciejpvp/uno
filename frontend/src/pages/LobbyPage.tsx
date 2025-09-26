@@ -3,7 +3,7 @@ import { Code } from "../components/LobbyPage/Code";
 import { PlayerList } from "../components/LobbyPage/PlayerList";
 import { useGameStore } from "../store/gameStore";
 import { useSocketStore } from "../store/socketStore";
-import type { PlayerType } from "../../../shared/types/types";
+import type { ServerToClientEvents } from "../../../shared/types/socket";
 
 export const LobbyPage = () => {
   const code = useGameStore((store) => store.code);
@@ -16,14 +16,29 @@ export const LobbyPage = () => {
   useEffect(() => {
     if (!socket?.active) return;
 
-    const handlePlayerJoined = (player: PlayerType) => {
+    const handlePlayerJoined = (
+      player: Parameters<ServerToClientEvents["playerJoined"]>[0],
+    ) => {
       setPlayers([...players, { id: player.id, username: player.username }]);
     };
 
+    const handleGameStarted = (
+      data: Parameters<ServerToClientEvents["lobbyStart"]>[0],
+    ) => {
+      const state = useGameStore.getState();
+
+      state.setStatus("playing");
+      state.setHand(data.hand);
+      state.setDiscardPile([data.pile]);
+      state.setCurrentTurn(data.currentTurn);
+    };
+
     socket.on("playerJoined", handlePlayerJoined);
+    socket.on("lobbyStart", handleGameStarted);
 
     return () => {
       socket.off("playerJoined", handlePlayerJoined);
+      socket.off("lobbyStart", handleGameStarted);
     };
   }, [socket, players, setPlayers]);
 
