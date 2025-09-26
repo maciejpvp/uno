@@ -3,6 +3,7 @@ import { Hand } from "../components/Game/Hand";
 import { useGameStore } from "../store/gameStore";
 import { useSocketStore } from "../store/socketStore";
 import type { ServerToClientEvents } from "../../../shared/types/socket";
+import { CardComponent } from "../components/Game/CardComponent";
 
 export const GamePage = () => {
   const discardPile = useGameStore((store) => store.discardPile);
@@ -43,11 +44,8 @@ export const GamePage = () => {
   return (
     <div className="flex flex-col items-center gap-6">
       <div>
-        <p className="text-lg font-semibold">Discard Pile</p>
-        {/* Show top card */}
         <div className="mt-2">
-          {/* reuse same CardComponent */}
-          <Hand cards={[lastPileCard]} />
+          <CardComponent card={lastPileCard} />
         </div>
       </div>
 
