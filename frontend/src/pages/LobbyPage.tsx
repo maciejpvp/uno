@@ -19,7 +19,10 @@ export const LobbyPage = () => {
     const handlePlayerJoined = (
       player: Parameters<ServerToClientEvents["playerJoined"]>[0],
     ) => {
-      setPlayers([...players, { id: player.id, username: player.username }]);
+      setPlayers([
+        ...players,
+        { id: player.id, username: player.username, cardCount: 7 },
+      ]);
     };
 
     const handleGameStarted = (

@@ -129,7 +129,7 @@ export const CardComponent = ({
 
       {/* Choose color overlay */}
       {choosing && (
-        <div className="absolute top-full mt-3 flex gap-3">
+        <div className="absolute -top-8 z-100 mt-3 flex gap-3">
           {(["red", "green", "blue", "yellow"] as const).map((c) => (
             <button
               key={c}

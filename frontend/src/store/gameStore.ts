@@ -6,7 +6,7 @@ type GameState = {
   status: "waiting" | "playing" | "finished";
   code: number;
   ownerId: string;
-  players: { id: string; username: string }[];
+  players: { id: string; username: string; cardCount: number }[];
   currentTurn: number; // Player Index
   direction: 1 | -1;
   discardPile: Card[];
@@ -17,7 +17,9 @@ type GameState = {
   setStatus: (val: "waiting" | "playing" | "finished") => void;
   setCode: (val: number) => void;
   setOwnerId: (val: string) => void;
-  setPlayers: (val: { id: string; username: string }[]) => void;
+  setPlayers: (
+    val: { id: string; username: string; cardCount: number }[],
+  ) => void;
   setCurrentTurn: (val: number) => void;
   setDirection: (val: 1 | -1) => void;
   setDiscardPile: (val: Card[]) => void;

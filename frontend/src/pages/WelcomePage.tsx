@@ -20,7 +20,11 @@ export const WelcomePage = () => {
       state.setCode(lobby.code);
       state.setOwnerId(lobby.ownerId);
       state.setPlayers(
-        lobby.players.map((p) => ({ id: p.id, username: p.username })),
+        lobby.players.map((p) => ({
+          id: p.id,
+          username: p.username,
+          cardCount: 7,
+        })),
       );
       state.setStatus(lobby.status);
     });
