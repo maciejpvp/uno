@@ -54,8 +54,6 @@ export const playCard = (data: {
     data.data.card.value === "wild" ||
     data.data.card.value === "wild-draw-four";
 
-  console.log(canPlay);
-
   if (!canPlay) return;
 
   // ✅ Remove card from player's hand & push to discard pile
@@ -94,23 +92,52 @@ export const playCard = (data: {
       lobby.currentTurn = getNextTurn(lobby, 1);
   }
 
-  // ✅ Check win condition
+  // Check win condition
   if (player.hand.length === 0) {
     io.to(lobby.id).emit("gameOver", { winner: player.id });
     games.delete(lobby.code);
     return;
   }
 
-  // ✅ Broadcast state update
-  console.log("Dd");
-  io.to(lobby.id).emit("cardPlayed", {
-    playerId: player.id,
-    card: playedCard,
-    currentTurn: lobby.currentTurn,
-    discardPile: lobby.discardPile,
-    players: lobby.players.map((p) => ({
-      id: p.id,
-      handCount: p.hand.length,
-    })),
-  });
+  for (const p of lobby.players) {
+    io.to(p.id).emit("cardPlayed", {
+      playerId: player.id,
+      card: playedCard,
+      currentTurn: lobby.currentTurn,
+      players: lobby.players.map((p) => ({
+        id: p.id,
+        handCount: p.hand.length,
+      })),
+      hand: p.hand,
+    });
+  }
+};
+
+export const drawCard = (data: {
+  code: number;
+  socket: AppSocket;
+  io: AppServer;
+}) => {
+  const { code, socket, io } = data;
+
+  const lobby = games.get(code);
+
+  if (!lobby) return;
+
+  const player = lobby.players[lobby.currentTurn];
+
+  if (player.id !== socket.id) return;
+
+  drawCards(player, lobby.drawPile, 1);
+
+  for (const p of lobby.players) {
+    io.to(p.id).emit("cardDrawn", {
+      playerId: player.id,
+      players: lobby.players.map((p) => ({
+        id: p.id,
+        handCount: p.hand.length,
+      })),
+      hand: p.hand,
+    });
+  }
 };

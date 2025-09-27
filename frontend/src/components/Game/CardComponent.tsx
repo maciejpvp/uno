@@ -18,6 +18,7 @@ export const CardComponent = ({
   const [choosing, setChoosing] = useState(false);
 
   const socket = useSocketStore((store) => store.socket);
+  const lastCard = useGameStore((store) => store.discardPile.at(-1));
 
   const colors: Record<Card["color"], string> = {
     red: "from-red-500 to-red-700",
@@ -27,8 +28,27 @@ export const CardComponent = ({
     black: "from-gray-700 to-black",
   };
 
+  const canPlay = (() => {
+    if (!lastCard) return true;
+    if (card.color === "black") {
+      if (card.value === "wild-draw-four") {
+        const hand = useGameStore.getState().hand;
+        const hasMatchingColor = hand.some(
+          (c) => c.color === lastCard.color && c.color !== "black",
+        );
+        return !hasMatchingColor;
+      }
+      return true;
+    }
+
+    if (card.color === lastCard.color || card.value === lastCard.value)
+      return true;
+
+    return false;
+  })();
+
   const handlePlayCard = () => {
-    if (!socket?.active) return;
+    if (!socket?.active || !canPlay) return;
 
     if (card.value === "wild" || card.value === "wild-draw-four") {
       setChoosing(true);
@@ -47,9 +67,7 @@ export const CardComponent = ({
     setChoosing(false);
   };
 
-  const bgGradient = isMyTurn
-    ? colors[card.color]
-    : "from-gray-600 to-gray-800";
+  const bgGradient = colors[card.color];
 
   // map values to icons
   const renderValue = () => {
@@ -97,14 +115,14 @@ export const CardComponent = ({
   return (
     <div className="relative flex flex-col items-center">
       <button
-        disabled={!isMyTurn}
+        disabled={!isMyTurn || !canPlay}
         onClick={handlePlayCard}
         className={`w-20 h-28 rounded-2xl flex items-center justify-center 
                     text-white shadow-xl border-4 border-white
                     bg-gradient-to-br ${bgGradient}
                     transform transition-transform duration-200 ease-in-out
                     hover:scale-110 active:scale-95
-                    ${!isMyTurn ? "opacity-70" : ""}`}
+                    ${!isMyTurn || !canPlay ? "opacity-40 cursor-not-allowed" : ""}`}
       >
         <div className="drop-shadow-lg">{renderValue()}</div>
       </button>

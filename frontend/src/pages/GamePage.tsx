@@ -19,25 +19,29 @@ export const GamePage = () => {
       console.log(data);
       const state = useGameStore.getState();
 
-      state.setDiscardPile(data.discardPile);
+      state.setDiscardPile([...state.discardPile, data.card]);
       state.setCurrentTurn(data.currentTurn);
+      state.setHand(data.hand);
+    };
 
-      if (socket.id === data.playerId) {
-        state.setHand(
-          hand.filter(
-            (c) =>
-              !(c.color === data.card.color && c.value === data.card.value),
-          ),
-        );
-      }
+    const handleCardDrawn: ServerToClientEvents["cardDrawn"] = (data) => {
+      const state = useGameStore.getState();
+
+      state.setHand(data.hand);
     };
 
     socket.on("cardPlayed", handleCardPlayed);
+    socket.on("cardDrawn", handleCardDrawn);
 
     return () => {
       socket.off("cardPlayed", handleCardPlayed);
+      socket.off("cardDrawn", handleCardDrawn);
     };
   }, [socket, hand]);
+
+  const handleDrawCard = () => {
+    socket?.emit("drawCard", { code: useGameStore.getState().code });
+  };
 
   if (lastPileCard === undefined) return null;
 
@@ -53,6 +57,7 @@ export const GamePage = () => {
         <p className="text-lg font-semibold">Your Hand</p>
         <Hand cards={hand} />
       </div>
+      <button onClick={handleDrawCard}>Draw Card</button>
     </div>
   );
 };

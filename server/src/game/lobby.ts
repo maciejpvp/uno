@@ -6,7 +6,7 @@ import { LobbyType, PlayerType } from "../../../shared/types/types";
 import { AppServer, AppSocket } from "..";
 
 export const createLobby = ({ player }: { player: PlayerType }): LobbyType => {
-  const code = 123456;
+  const code = 123123;
 
   const id = uuidv4();
 

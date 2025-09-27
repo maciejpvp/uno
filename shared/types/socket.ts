@@ -7,8 +7,13 @@ export interface ServerToClientEvents {
     playerId: string;
     card: Card;
     currentTurn: number;
-    discardPile: Card[];
     players: { id: string; handCount: number }[];
+    hand: Card[];
+  }) => void;
+  cardDrawn: (data: {
+    playerId: string;
+    players: { id: string; handCount: number }[];
+    hand: Card[];
   }) => void;
   gameOver: (data: { winner: string }) => void;
 }
@@ -31,6 +36,7 @@ export interface ClientToServerEvents {
   ) => void;
   startLobby: (code: number) => void;
   playCard: (data: { code: number; card: Card; chosenColor?: Color }) => void;
+  drawCard: (data: { code: number }) => void;
 }
 
 export interface InterServerEvents {
