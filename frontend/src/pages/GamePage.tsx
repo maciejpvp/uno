@@ -86,12 +86,14 @@ export const GamePage = () => {
       </div>
 
       {top && (
-        <BackHand
-          username={top.username}
-          cardCount={top.cardCount}
-          highlight={players[currentTurn]?.id === top.id}
-          orientation="top"
-        />
+        <div className="w-auto">
+          <BackHand
+            username={top.username}
+            cardCount={top.cardCount}
+            highlight={players[currentTurn]?.id === top.id}
+            orientation="top"
+          />
+        </div>
       )}
 
       <div className="flex flex-1 w-full items-center justify-between">
