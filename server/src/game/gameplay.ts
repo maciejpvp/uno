@@ -54,6 +54,11 @@ export const playCard = (data: {
   if (!canPlayCard(data.data.card, topCard)) return;
 
   const [playedCard] = player.hand.splice(cardIndex, 1);
+
+  const card = lobby.discardPile.pop()!;
+  const randomIndex = Math.floor(Math.random() * (lobby.drawPile.length + 1));
+
+  lobby.drawPile.splice(randomIndex, 0, card);
   lobby.discardPile.push(playedCard);
 
   switch (playedCard.value) {
@@ -62,13 +67,13 @@ export const playCard = (data: {
       lobby.currentTurn = getNextTurn(lobby, 1);
       break;
     case "skip":
-      lobby.currentTurn = getNextTurn(lobby, 2); // skip next player
+      lobby.currentTurn = getNextTurn(lobby, 2);
       break;
     case "draw-two": {
       const next = getNextTurn(lobby, 1);
       const nextPlayer = lobby.players[next];
       drawCards(nextPlayer, lobby.drawPile, 2);
-      lobby.currentTurn = getNextTurn(lobby, 2);
+      lobby.currentTurn = getNextTurn(lobby, 1);
       break;
     }
     case "wild":
@@ -80,7 +85,7 @@ export const playCard = (data: {
       const next = getNextTurn(lobby, 1);
       const nextPlayer = lobby.players[next];
       drawCards(nextPlayer, lobby.drawPile, 4);
-      lobby.currentTurn = getNextTurn(lobby, 2);
+      lobby.currentTurn = getNextTurn(lobby, 1);
       break;
     }
     default:
