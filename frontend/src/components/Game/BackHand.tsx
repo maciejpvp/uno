@@ -20,7 +20,7 @@ export const BackHand = ({
   const rotate = isVertical ? (orientation === "left" ? -90 : 90) : 0;
 
   return (
-    <div className="flex flex-col items-center justify-center relative ">
+    <div className="flex flex-col items-center justify-center relative max-h-[50dvh]">
       <p className="mb-1 text-violet-50">{username}</p>
       <div
         className={`relative flex items-center justify-center  ${isVertical ? "translate-y-12" : "translate-x-12"}`}

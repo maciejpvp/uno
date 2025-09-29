@@ -2,7 +2,9 @@ import { Card, LobbyType, PlayerType, Color } from "./types";
 
 export interface ServerToClientEvents {
   lobbyStart: (data: { hand: Card[]; pile: Card; currentTurn: number }) => void;
+  lobbyReset: (data: { hand: Card[]; pile: Card; currentTurn: number }) => void;
   playerJoined: (player: PlayerType) => void;
+  playerLeft: (data: { playerId: string; players: PlayerType[] }) => void;
   cardPlayed: (data: {
     playerId: string;
     card: Card;
@@ -37,6 +39,8 @@ export interface ClientToServerEvents {
   startLobby: (code: number) => void;
   playCard: (data: { code: number; card: Card; chosenColor?: Color }) => void;
   drawCard: (data: { code: number }) => void;
+  resetLobby: (data: { code: number }) => void;
+  leaveLobby: (data: { code: number }) => void;
 }
 
 export interface InterServerEvents {
@@ -45,4 +49,5 @@ export interface InterServerEvents {
 
 export interface SocketData {
   userId?: string;
+  lobbyId?: number;
 }

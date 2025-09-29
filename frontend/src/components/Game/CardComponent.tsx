@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Card } from "../../../../shared/types/types";
 import { useGameStore } from "../../store/gameStore";
 import { useSocketStore } from "../../store/socketStore";
 
 // lucide-react icons
 import { SkipForward, RefreshCcw, Plus } from "lucide-react";
+import { ChooseColor } from "./ChooseColor";
 
 type CardComponentProps = {
   card: Card;
@@ -16,6 +17,32 @@ export const CardComponent = ({
   isMyTurn = true,
 }: CardComponentProps) => {
   const [choosing, setChoosing] = useState(false);
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [coords, setCoords] = useState<{ x: number; y: number }>({
+    x: 0,
+    y: 0,
+  });
+
+  useEffect(() => {
+    const updateCoords = () => {
+      if (ref.current) {
+        const rect = ref.current.getBoundingClientRect();
+        setCoords({
+          x: rect.left + window.scrollX,
+          y: rect.top + window.scrollY,
+        });
+      }
+    };
+
+    updateCoords();
+    window.addEventListener("scroll", updateCoords, true);
+    window.addEventListener("resize", updateCoords);
+
+    return () => {
+      window.removeEventListener("scroll", updateCoords, true);
+      window.removeEventListener("resize", updateCoords);
+    };
+  }, [choosing]);
 
   const socket = useSocketStore((store) => store.socket);
   const lastCard = useGameStore((store) => store.discardPile.at(-1));
@@ -113,7 +140,7 @@ export const CardComponent = ({
   };
 
   return (
-    <div className="relative flex flex-col items-center">
+    <div ref={ref} className="relative flex flex-col items-center">
       <button
         disabled={!isMyTurn || !canPlay}
         onClick={handlePlayCard}
@@ -127,18 +154,12 @@ export const CardComponent = ({
         <div className="drop-shadow-lg">{renderValue()}</div>
       </button>
 
-      {/* Choose color overlay */}
       {choosing && (
-        <div className="absolute -top-8 z-100 mt-3 flex gap-3">
-          {(["red", "green", "blue", "yellow"] as const).map((c) => (
-            <button
-              key={c}
-              onClick={() => handleChooseColor(c)}
-              className={`w-7 h-7 rounded-full bg-gradient-to-br ${colors[c]} 
-                          shadow-md hover:scale-110 transition-transform`}
-            />
-          ))}
-        </div>
+        <ChooseColor
+          onChoose={handleChooseColor}
+          coords={coords}
+          close={() => setChoosing(false)}
+        />
       )}
     </div>
   );

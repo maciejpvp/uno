@@ -5,6 +5,7 @@ import { useSocketStore } from "../store/socketStore";
 import type { ServerToClientEvents } from "../../../shared/types/socket";
 import { CardComponent } from "../components/Game/CardComponent";
 import { BackHand } from "../components/Game/BackHand";
+import { GameOverModal } from "../components/Game/GameOverModal";
 
 export const GamePage = () => {
   const discardPile = useGameStore((store) => store.discardPile);
@@ -12,6 +13,8 @@ export const GamePage = () => {
   const players = useGameStore((store) => store.players);
   const currentTurn = useGameStore((store) => store.currentTurn);
   const socket = useSocketStore((store) => store.socket);
+  const status = useGameStore((store) => store.status);
+  const winner = useGameStore((store) => store.winner);
 
   const lastPileCard = discardPile.at(-1);
 
@@ -42,17 +45,39 @@ export const GamePage = () => {
       state.setHand(data.hand);
     };
 
+    const handleGameOver: ServerToClientEvents["gameOver"] = (data) => {
+      const { winner } = data;
+      const state = useGameStore.getState();
+
+      state.setStatus("finished");
+      const winnerPlayer = state.players.find((p) => p.id === winner);
+      const username = winnerPlayer?.username;
+      state.setWinner(username);
+    };
+
+    const handleResetGame = () => {
+      useGameStore.getState().resetGame();
+    };
+
     socket.on("cardPlayed", handleCardPlayed);
     socket.on("cardDrawn", handleCardDrawn);
+    socket.on("gameOver", handleGameOver);
+    socket.on("lobbyReset", handleResetGame);
 
     return () => {
       socket.off("cardPlayed", handleCardPlayed);
       socket.off("cardDrawn", handleCardDrawn);
+      socket.off("gameOver", handleGameOver);
+      socket.off("lobbyReset", handleResetGame);
     };
   }, [socket]);
 
   const handleDrawCard = () => {
     socket?.emit("drawCard", { code: useGameStore.getState().code });
+  };
+
+  const handlePlayAgain = () => {
+    socket?.emit("resetLobby", { code: useGameStore.getState().code });
   };
 
   if (!lastPileCard) return null;
@@ -125,6 +150,12 @@ export const GamePage = () => {
         </p>
         <Hand cards={hand} />
       </div>
+      {status === "finished" && (
+        <GameOverModal
+          winner={winner ? winner : ""}
+          onClose={handlePlayAgain}
+        />
+      )}
     </div>
   );
 };

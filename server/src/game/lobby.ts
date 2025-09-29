@@ -5,8 +5,18 @@ import { createPlayer } from "./player";
 import { LobbyType, PlayerType } from "../../../shared/types/types";
 import { AppServer, AppSocket } from "..";
 
+const generateLobbyCode = (): number => {
+  let lobbyId: number;
+
+  do {
+    lobbyId = Math.floor(100000 + Math.random() * 900000);
+  } while (games.has(lobbyId));
+
+  return lobbyId;
+};
+
 export const createLobby = ({ player }: { player: PlayerType }): LobbyType => {
-  const code = 123123;
+  const code = generateLobbyCode();
 
   const id = uuidv4();
 
@@ -92,4 +102,84 @@ export const startLobby = ({
       currentTurn: lobby.currentTurn,
     });
   }
+};
+
+export const resetLobby = ({
+  code,
+  io,
+  socket,
+}: {
+  code: number;
+  io: AppServer;
+  socket: AppSocket;
+}) => {
+  const lobby = games.get(code);
+  console.log(lobby);
+
+  if (!lobby) return;
+
+  const ownerId = lobby.ownerId;
+  if (ownerId !== socket.id) return;
+
+  console.log("good");
+
+  lobby.currentTurn = 0;
+  lobby.direction = 1;
+  lobby.drawPile = [];
+  lobby.discardPile = [];
+  lobby.status = "waiting";
+
+  const { drawPile, updatedPlayers } = createCards(lobby.players);
+
+  lobby.players = updatedPlayers;
+  lobby.drawPile = drawPile;
+  lobby.discardPile = [drawPile.pop()!];
+
+  for (const player of lobby.players) {
+    console.log(`${player.id} sent`);
+    io.to(player.id).emit("lobbyReset", {
+      hand: player.hand,
+      pile: lobby.discardPile.at(-1)!,
+      currentTurn: lobby.currentTurn,
+    });
+  }
+
+  games.set(code, lobby);
+
+  return lobby;
+};
+
+export const playerLeave = ({
+  code,
+  playerId,
+  socket,
+  io,
+}: {
+  code: number;
+  playerId: string;
+  socket: AppSocket;
+  io: AppServer;
+}) => {
+  const lobby = games.get(code);
+  if (!lobby) return;
+
+  lobby.players = lobby.players.filter((p) => p.id !== playerId);
+
+  if (lobby.players.length === 0) {
+    games.delete(code);
+    return;
+  }
+
+  // If owner left → reassign
+  if (lobby.ownerId === playerId) {
+    lobby.ownerId = lobby.players[0].id;
+  }
+
+  socket.leave(lobby.id);
+
+  io.to(lobby.id).emit("playerLeft", { playerId, players: lobby.players });
+
+  games.set(code, lobby);
+
+  return lobby;
 };

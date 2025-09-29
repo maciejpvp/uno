@@ -92,9 +92,9 @@ export const playCard = (data: {
       lobby.currentTurn = getNextTurn(lobby, 1);
   }
 
+  console.log(player.hand.length);
   if (player.hand.length === 0) {
     io.to(lobby.id).emit("gameOver", { winner: player.id });
-    games.delete(lobby.code);
     return;
   }
 

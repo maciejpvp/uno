@@ -1,5 +1,11 @@
 import { AppServer, AppSocket } from "..";
-import { createLobby, joinLobby, startLobby } from "../game/lobby";
+import {
+  createLobby,
+  joinLobby,
+  playerLeave,
+  resetLobby,
+  startLobby,
+} from "../game/lobby";
 import { createPlayer } from "../game/player";
 
 export default function registerLobbyHandlers(
@@ -9,6 +15,8 @@ export default function registerLobbyHandlers(
   socket.on("createLobby", (callback) => {
     const player = createPlayer(socket);
     const lobby = createLobby({ player });
+
+    socket.data.lobbyId = lobby.code;
 
     // Join User to socket room
     socket.join(lobby.id);
@@ -21,11 +29,26 @@ export default function registerLobbyHandlers(
     if (typeof lobby === "string") {
       callback({ success: false, message: lobby });
     } else {
+      socket.data.lobbyId = lobby.code;
       callback({ success: true, data: lobby });
     }
   });
 
   socket.on("startLobby", (code) => {
+    console.log(code);
+
     startLobby({ code, playerId: socket.id, io });
+  });
+
+  socket.on("resetLobby", (data) => {
+    const { code } = data;
+    console.log(code);
+    resetLobby({ code, socket, io });
+  });
+
+  socket.on("leaveLobby", (data) => {
+    const { code } = data;
+
+    playerLeave({ code, playerId: socket.id, socket, io });
   });
 }

@@ -9,6 +9,7 @@ import {
   SocketData,
 } from "../../shared/types/socket";
 import registerGameHandlers from "./sockets/game";
+import { playerLeave } from "./game/lobby";
 
 export type AppServer = Server<
   ClientToServerEvents,
@@ -36,6 +37,19 @@ io.on("connection", (socket: AppSocket) => {
 
   registerLobbyHandlers(io, socket);
   registerGameHandlers(io, socket);
+
+  socket.on("disconnect", (reason) => {
+    if (socket.data.lobbyId) {
+      playerLeave({
+        code: socket.data.lobbyId,
+        playerId: socket.id,
+        socket,
+        io,
+      });
+    }
+
+    console.log(`❌ Client disconnected: ${socket.id}, reason: ${reason}`);
+  });
 });
 
 const PORT = process.env.PORT || 3000;

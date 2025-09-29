@@ -50,7 +50,7 @@ export function createCards(players: PlayerType[]): {
 } {
   let deck = shuffle(generateDeck());
   const updatedPlayers = players.map((player) => {
-    const hand = deck.splice(0, 7); // 7 cards each
+    const hand = deck.splice(0, 1); // 7 cards each
     return { ...player, hand };
   });
 

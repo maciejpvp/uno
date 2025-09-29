@@ -50,7 +50,11 @@ export const LobbyPage = () => {
       <div className="absolute top-[5vh]">
         <Code code={code} />
       </div>
-      <PlayerList players={players} ownerId={ownerId} />
+      <PlayerList
+        players={players}
+        ownerId={ownerId}
+        isOwnerOfLobby={ownerId === socket?.id}
+      />
     </div>
   );
 };

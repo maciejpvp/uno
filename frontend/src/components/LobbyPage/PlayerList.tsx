@@ -10,12 +10,14 @@ type PlayerListProps = {
   players: Player[];
   ownerId: string;
   maxPlayers?: number;
+  isOwnerOfLobby: boolean;
 };
 
 export const PlayerList = ({
   players,
   ownerId,
   maxPlayers = 4,
+  isOwnerOfLobby,
 }: PlayerListProps) => {
   return (
     <div className="flex flex-col gap-6 w-full max-w-md mx-auto">
@@ -50,7 +52,7 @@ export const PlayerList = ({
           </div>
         ))}
       </div>
-      <StartGameButton />
+      {isOwnerOfLobby && <StartGameButton />}
     </div>
   );
 };
