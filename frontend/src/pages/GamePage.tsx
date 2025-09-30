@@ -99,7 +99,7 @@ export const GamePage = () => {
   return (
     <div className="relative w-full h-screen flex flex-col items-center justify-between p-6">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 items-center flex flex-col gap-2">
-        <CardComponent card={lastPileCard} />
+        <CardComponent card={lastPileCard} size="lg" />
         {isMyTurn && (
           <button
             onClick={handleDrawCard}
@@ -141,10 +141,10 @@ export const GamePage = () => {
         )}
       </div>
 
-      <div className="flex flex-col items-center mb-4 pb-4 relative">
+      <div className="flex flex-col items-center relative">
         <p
           className={`text-lg font-semibold
-               text-yellow-400 animate-pulse absolute -top-2`}
+               text-yellow-400 animate-pulse absolute top-2`}
         >
           {isMyTurn ? "Your Turn" : ""}
         </p>

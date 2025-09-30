@@ -15,10 +15,10 @@ export const Hand = ({ cards }: HandProps) => {
   const isMyTurn = players[currentTurn]?.id === socket?.id;
 
   return (
-    <div className="overflow-x-auto p-4 max-w-[95dvw] custom-scrollbar pt-8">
-      <div className="flex gap-[-40px] min-w-max">
+    <div className="p-4 pt-8 max-w-[95dvw]">
+      <div className="flex flex-wrap justify-center gap-2 max-h-[33dvh] overflow-y-auto custom-scrollbar p-2">
         {cards.map((card, idx) => (
-          <CardComponent key={idx} card={card} isMyTurn={isMyTurn} />
+          <CardComponent key={idx} card={card} isMyTurn={isMyTurn} size="lg" />
         ))}
       </div>
     </div>

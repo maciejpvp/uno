@@ -1,4 +1,5 @@
 import { Card, Color, PlayerType, Value } from "../../../shared/types/types";
+import { isNumber } from "../utils/isNumber";
 
 const colors: Color[] = ["red", "green", "blue", "yellow"];
 const numbers: Value[] = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
@@ -47,12 +48,25 @@ function shuffle<T>(arr: T[]): T[] {
 export function createCards(players: PlayerType[]): {
   drawPile: Card[];
   updatedPlayers: PlayerType[];
+  startingCard: Card;
 } {
   let deck = shuffle(generateDeck());
   const updatedPlayers = players.map((player) => {
-    const hand = deck.splice(0, 1); // 7 cards each
+    const hand = deck.splice(0, 7); // 7 cards each
     return { ...player, hand };
   });
 
-  return { drawPile: deck, updatedPlayers };
+  let startingCard: Card | undefined = undefined;
+
+  do {
+    startingCard = deck.shift() as Card;
+    const value = startingCard.value;
+    const isNum = isNumber(value);
+    if (!isNum) {
+      deck.push(startingCard);
+      startingCard = undefined;
+    }
+  } while (!startingCard);
+
+  return { drawPile: deck, updatedPlayers, startingCard };
 }

@@ -87,11 +87,15 @@ export const startLobby = ({
 
   if (lobby.ownerId !== playerId) return;
 
-  const { drawPile, updatedPlayers } = createCards(lobby.players);
+  if (lobby.players.length <= 1) return;
+
+  const { drawPile, updatedPlayers, startingCard } = createCards(lobby.players);
+
+  console.log(startingCard);
 
   lobby.players = updatedPlayers;
   lobby.drawPile = drawPile;
-  lobby.discardPile = [drawPile.pop()!];
+  lobby.discardPile = [startingCard];
 
   lobby.status = "playing";
 

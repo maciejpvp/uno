@@ -52,7 +52,7 @@ export const PlayerList = ({
           </div>
         ))}
       </div>
-      {isOwnerOfLobby && <StartGameButton />}
+      {isOwnerOfLobby && <StartGameButton disabled={players.length <= 1} />}
     </div>
   );
 };

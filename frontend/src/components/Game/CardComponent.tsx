@@ -3,18 +3,19 @@ import type { Card } from "../../../../shared/types/types";
 import { useGameStore } from "../../store/gameStore";
 import { useSocketStore } from "../../store/socketStore";
 
-// lucide-react icons
 import { SkipForward, RefreshCcw, Plus } from "lucide-react";
 import { ChooseColor } from "./ChooseColor";
 
 type CardComponentProps = {
   card: Card;
   isMyTurn?: boolean;
+  size?: "sm" | "md" | "lg";
 };
 
 export const CardComponent = ({
   card,
   isMyTurn = true,
+  size = "md",
 }: CardComponentProps) => {
   const [choosing, setChoosing] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
@@ -55,6 +56,18 @@ export const CardComponent = ({
     black: "from-gray-700 to-black",
   };
 
+  const sizeClasses: Record<
+    typeof size,
+    { card: string; icon: string; text: string }
+  > = {
+    sm: { card: "w-14 h-20", icon: "w-6 h-6", text: "text-xl" },
+    md: { card: "w-20 h-28", icon: "w-10 h-10", text: "text-3xl" },
+    lg: { card: "w-28 h-40", icon: "w-14 h-14", text: "text-5xl" },
+  };
+
+  const currentSize = sizeClasses[size];
+  const bgGradient = colors[card.color];
+
   const canPlay = (() => {
     if (!lastCard) return true;
     if (card.color === "black") {
@@ -67,11 +80,7 @@ export const CardComponent = ({
       }
       return true;
     }
-
-    if (card.color === lastCard.color || card.value === lastCard.value)
-      return true;
-
-    return false;
+    return card.color === lastCard.color || card.value === lastCard.value;
   })();
 
   const handlePlayCard = () => {
@@ -88,31 +97,35 @@ export const CardComponent = ({
 
   const handleChooseColor = (color: "red" | "green" | "blue" | "yellow") => {
     if (!socket?.active) return;
-
     const code = useGameStore.getState().code;
     socket.emit("playCard", { code, card, chosenColor: color });
     setChoosing(false);
   };
 
-  const bgGradient = colors[card.color];
-
-  // map values to icons
   const renderValue = () => {
     switch (card.value) {
       case "skip":
-        return <SkipForward className="w-10 h-10" />;
+        return <SkipForward className={currentSize.icon} />;
       case "reverse":
-        return <RefreshCcw className="w-10 h-10" />;
+        return <RefreshCcw className={currentSize.icon} />;
       case "draw-two":
         return (
           <div className="flex items-center gap-1">
-            <Plus className="w-8 h-8" />
-            <span className="text-lg font-bold">2</span>
+            <Plus
+              className={`${size === "sm" ? "w-4 h-4" : size === "lg" ? "w-8 h-8" : "w-6 h-6"}`}
+            />
+            <span
+              className={`${size === "sm" ? "text-sm" : size === "lg" ? "text-2xl" : "text-lg"} font-bold`}
+            >
+              2
+            </span>
           </div>
         );
       case "wild":
         return (
-          <div className="grid grid-cols-2 gap-1 w-12 h-12">
+          <div
+            className={`grid grid-cols-2 gap-1 ${size === "sm" ? "w-8 h-8" : size === "lg" ? "w-16 h-16" : "w-12 h-12"}`}
+          >
             <div className="rounded-sm bg-red-500" />
             <div className="rounded-sm bg-green-500" />
             <div className="rounded-sm bg-blue-500" />
@@ -122,20 +135,32 @@ export const CardComponent = ({
       case "wild-draw-four":
         return (
           <div className="flex flex-col items-center">
-            <div className="grid grid-cols-2 gap-0.5 w-10 h-10 mb-1">
+            <div
+              className={`grid grid-cols-2 gap-0.5 mb-1 ${size === "sm" ? "w-6 h-6" : size === "lg" ? "w-14 h-14" : "w-10 h-10"}`}
+            >
               <div className="rounded-sm bg-red-500" />
               <div className="rounded-sm bg-green-500" />
               <div className="rounded-sm bg-blue-500" />
               <div className="rounded-sm bg-yellow-400" />
             </div>
             <div className="flex items-center gap-1">
-              <Plus className="w-5 h-5" />
-              <span className="text-md font-bold">4</span>
+              <Plus
+                className={`${size === "sm" ? "w-3 h-3" : size === "lg" ? "w-6 h-6" : "w-5 h-5"}`}
+              />
+              <span
+                className={`${size === "sm" ? "text-sm" : size === "lg" ? "text-xl" : "text-md"} font-bold`}
+              >
+                4
+              </span>
             </div>
           </div>
         );
       default:
-        return <span className="text-3xl font-extrabold">{card.value}</span>;
+        return (
+          <span className={`${currentSize.text} font-extrabold`}>
+            {card.value}
+          </span>
+        );
     }
   };
 
@@ -144,7 +169,7 @@ export const CardComponent = ({
       <button
         disabled={!isMyTurn || !canPlay}
         onClick={handlePlayCard}
-        className={`w-20 h-28 rounded-2xl flex items-center justify-center 
+        className={`${currentSize.card} rounded-2xl flex items-center justify-center 
                     text-white shadow-xl border-4 border-white
                     bg-gradient-to-br ${bgGradient}
                     transform transition-transform duration-200 ease-in-out
