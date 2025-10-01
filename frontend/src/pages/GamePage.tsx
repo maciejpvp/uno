@@ -6,6 +6,7 @@ import type { ServerToClientEvents } from "../../../shared/types/socket";
 import { CardComponent } from "../components/Game/CardComponent";
 import { BackHand } from "../components/Game/BackHand";
 import { GameOverModal } from "../components/Game/GameOverModal";
+import { DrawCardButton } from "../components/Game/DrawCardButton";
 
 export const GamePage = () => {
   const discardPile = useGameStore((store) => store.discardPile);
@@ -97,65 +98,60 @@ export const GamePage = () => {
   const isMyTurn = players[currentTurn]?.id === myId;
 
   return (
-    <div className="relative w-full h-screen flex flex-col items-center justify-between p-6">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 items-center flex flex-col gap-2">
-        <CardComponent card={lastPileCard} size="lg" />
-        {isMyTurn && (
-          <button
-            onClick={handleDrawCard}
-            className="mt-3 px-4 py-2 rounded-lg bg-indigo-900 text-indigo-50 shadow-md hover:bg-indigo-800 transition-all"
-          >
-            Draw Card
-          </button>
-        )}
-      </div>
-
-      {top && (
-        <div className="w-auto">
-          <BackHand
-            username={top.username}
-            cardCount={top.cardCount}
-            highlight={players[currentTurn]?.id === top.id}
-            orientation="top"
-          />
+    <>
+      {isMyTurn && <DrawCardButton onClick={handleDrawCard} />}
+      <div className="relative w-full h-screen flex flex-col items-center justify-between p-6">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 items-center flex flex-col gap-2">
+          <CardComponent card={lastPileCard} size="lg" />
         </div>
-      )}
 
-      <div className="flex flex-1 w-full items-center justify-between">
-        {left && (
-          <BackHand
-            username={left.username}
-            cardCount={left.cardCount}
-            highlight={players[currentTurn]?.id === left.id}
-            orientation="left"
-          />
+        {top && (
+          <div className="w-auto">
+            <BackHand
+              username={top.username}
+              cardCount={top.cardCount}
+              highlight={players[currentTurn]?.id === top.id}
+              orientation="top"
+            />
+          </div>
         )}
 
-        {right && (
-          <BackHand
-            username={right.username}
-            cardCount={right.cardCount}
-            highlight={players[currentTurn]?.id === right.id}
-            orientation="right"
-          />
-        )}
-      </div>
+        <div className="flex flex-1 w-full items-center justify-between">
+          {left && (
+            <BackHand
+              username={left.username}
+              cardCount={left.cardCount}
+              highlight={players[currentTurn]?.id === left.id}
+              orientation="left"
+            />
+          )}
 
-      <div className="flex flex-col items-center relative">
-        <p
-          className={`text-lg font-semibold
+          {right && (
+            <BackHand
+              username={right.username}
+              cardCount={right.cardCount}
+              highlight={players[currentTurn]?.id === right.id}
+              orientation="right"
+            />
+          )}
+        </div>
+
+        <div className="flex flex-col items-center relative">
+          <p
+            className={`text-lg font-semibold
                text-yellow-400 animate-pulse absolute top-2`}
-        >
-          {isMyTurn ? "Your Turn" : ""}
-        </p>
-        <Hand cards={hand} />
+          >
+            {isMyTurn ? "Your Turn" : ""}
+          </p>
+          <Hand cards={hand} />
+        </div>
+        {status === "finished" && (
+          <GameOverModal
+            winner={winner ? winner : ""}
+            onClose={handlePlayAgain}
+          />
+        )}
       </div>
-      {status === "finished" && (
-        <GameOverModal
-          winner={winner ? winner : ""}
-          onClose={handlePlayAgain}
-        />
-      )}
-    </div>
+    </>
   );
 };

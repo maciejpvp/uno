@@ -91,8 +91,6 @@ export const startLobby = ({
 
   const { drawPile, updatedPlayers, startingCard } = createCards(lobby.players);
 
-  console.log(startingCard);
-
   lobby.players = updatedPlayers;
   lobby.drawPile = drawPile;
   lobby.discardPile = [startingCard];
@@ -118,14 +116,11 @@ export const resetLobby = ({
   socket: AppSocket;
 }) => {
   const lobby = games.get(code);
-  console.log(lobby);
 
   if (!lobby) return;
 
   const ownerId = lobby.ownerId;
   if (ownerId !== socket.id) return;
-
-  console.log("good");
 
   lobby.currentTurn = 0;
   lobby.direction = 1;
@@ -140,7 +135,6 @@ export const resetLobby = ({
   lobby.discardPile = [drawPile.pop()!];
 
   for (const player of lobby.players) {
-    console.log(`${player.id} sent`);
     io.to(player.id).emit("lobbyReset", {
       hand: player.hand,
       pile: lobby.discardPile.at(-1)!,

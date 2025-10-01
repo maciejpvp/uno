@@ -35,14 +35,11 @@ export default function registerLobbyHandlers(
   });
 
   socket.on("startLobby", (code) => {
-    console.log(code);
-
     startLobby({ code, playerId: socket.id, io });
   });
 
   socket.on("resetLobby", (data) => {
     const { code } = data;
-    console.log(code);
     resetLobby({ code, socket, io });
   });
 
