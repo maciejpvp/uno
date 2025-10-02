@@ -10,12 +10,16 @@ type CardComponentProps = {
   card: Card;
   isMyTurn?: boolean;
   size?: "sm" | "md" | "lg";
+  top: number;
+  left: number;
 };
 
 export const CardComponent = ({
   card,
   isMyTurn = true,
   size = "md",
+  top,
+  left,
 }: CardComponentProps) => {
   const [choosing, setChoosing] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
@@ -165,7 +169,11 @@ export const CardComponent = ({
   };
 
   return (
-    <div ref={ref} className="relative flex flex-col items-center">
+    <div
+      ref={ref}
+      className={`absolute flex flex-col items-center `}
+      style={{ top: top, left: left }}
+    >
       <button
         disabled={!isMyTurn || !canPlay}
         onClick={handlePlayCard}

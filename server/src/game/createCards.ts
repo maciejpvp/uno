@@ -7,27 +7,29 @@ const actions: Value[] = ["skip", "reverse", "draw-two"];
 const wilds: Value[] = ["wild", "wild-draw-four"];
 
 // Create a full UNO deck with correct card counts
+
 function generateDeck(): Card[] {
   const deck: Card[] = [];
+  let id = 0;
 
   // Numbered cards
   colors.forEach((color) => {
     numbers.forEach((num) => {
-      deck.push({ color, value: num }); // one 0 per color
-      if (num !== "0") deck.push({ color, value: num }); // two of 1-9
+      deck.push({ id: id++, color, value: num }); // one 0 per color
+      if (num !== "0") deck.push({ id: id++, color, value: num }); // two of 1-9
     });
 
     // Action cards (2 each per color)
     actions.forEach((action) => {
-      deck.push({ color, value: action });
-      deck.push({ color, value: action });
+      deck.push({ id: id++, color, value: action });
+      deck.push({ id: id++, color, value: action });
     });
   });
 
   // Wild cards (4 each)
   wilds.forEach((wild) => {
     for (let i = 0; i < 4; i++) {
-      deck.push({ color: "black", value: wild });
+      deck.push({ id: id++, color: "black", value: wild });
     }
   });
 

@@ -18,6 +18,7 @@ export type Value =
   | "wild-draw-four";
 
 export type Card = {
+  id: number;
   color: Color;
   value: Value;
 };
