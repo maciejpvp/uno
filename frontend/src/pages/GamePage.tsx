@@ -101,7 +101,7 @@ export const GamePage = () => {
     <>
       {isMyTurn && <DrawCardButton onClick={handleDrawCard} />}
       <div className="relative w-full h-screen flex flex-col items-center justify-between p-6">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 items-center flex flex-col gap-2 bg-red-900">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 items-center flex flex-col gap-2">
           {/* -80 and -56 is half of width and heigh of cards so its in center */}
           <CardComponent card={lastPileCard} size="lg" top={-80} left={-56} />
         </div>

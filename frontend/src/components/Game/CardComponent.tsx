@@ -10,8 +10,8 @@ type CardComponentProps = {
   card: Card;
   isMyTurn?: boolean;
   size?: "sm" | "md" | "lg";
-  top: number;
-  left: number;
+  top?: number;
+  left?: number;
 };
 
 export const CardComponent = ({
