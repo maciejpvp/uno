@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Hand } from "../components/Game/Hand";
 import { useGameStore } from "../store/gameStore";
 import { useSocketStore } from "../store/socketStore";
@@ -7,6 +7,7 @@ import { CardComponent } from "../components/Game/CardComponent";
 import { BackHand } from "../components/Game/BackHand";
 import { GameOverModal } from "../components/Game/GameOverModal";
 import { DrawCardButton } from "../components/Game/DrawCardButton";
+import { isMobile } from "react-device-detect";
 
 export const GamePage = () => {
   const discardPile = useGameStore((store) => store.discardPile);
@@ -18,6 +19,8 @@ export const GamePage = () => {
   const winner = useGameStore((store) => store.winner);
 
   const lastPileCard = discardPile.at(-1);
+
+  const [discardPileOffset, setDiscardPileOffset] = useState(0);
 
   useEffect(() => {
     if (!socket?.active) return;
@@ -99,11 +102,26 @@ export const GamePage = () => {
 
   return (
     <>
-      {isMyTurn && <DrawCardButton onClick={handleDrawCard} />}
+      {isMyTurn && !isMobile && <DrawCardButton onClick={handleDrawCard} />}
       <div className="relative w-full h-screen flex flex-col items-center justify-between p-6">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 items-center flex flex-col gap-2">
-          {/* -80 and -56 is half of width and heigh of cards so its in center */}
-          <CardComponent card={lastPileCard} size="lg" top={-80} left={-56} />
+        <div
+          className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 items-center flex flex-col gap-2`}
+          style={{
+            transform: `translate(-50%, calc(-50% - ${discardPileOffset}px))`,
+          }}
+        >
+          <CardComponent
+            card={lastPileCard}
+            size={isMobile ? "sm" : "lg"}
+            top={isMobile ? -30 : -110}
+            left={isMobile ? -28 : -56}
+          />
+          <button
+            className="bg-purple-950 text-purple-100 p-2 rounded-md absolute text-nowrap top-15 w-26 active:scale-110 transition-transform"
+            onClick={handleDrawCard}
+          >
+            Draw Card
+          </button>
         </div>
 
         {top && (
@@ -144,7 +162,7 @@ export const GamePage = () => {
           >
             {isMyTurn ? "Your Turn" : ""}
           </p>
-          <Hand cards={hand} />
+          <Hand cards={hand} setDiscardPileOffset={setDiscardPileOffset} />
         </div>
         {status === "finished" && (
           <GameOverModal

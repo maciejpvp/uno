@@ -29,7 +29,7 @@ export const useSocketStore = create<SocketStore>((set) => ({
     }
 
     const socket = io(
-      `${import.meta.env.VITE_BACKEND || "http://localhost:3000"}`,
+      `${import.meta.env.VITE_BACKEND || "http://192.168.1.102:3000"}`,
     );
 
     socket.on("connect", () => {

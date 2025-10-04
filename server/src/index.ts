@@ -1,4 +1,5 @@
 import { createServer } from "http";
+import os from "os";
 import express from "express";
 import registerLobbyHandlers from "./sockets/lobby";
 import { Server, Socket } from "socket.io";
@@ -53,6 +54,18 @@ io.on("connection", (socket: AppSocket) => {
 });
 
 const PORT = process.env.PORT || 3000;
-httpServer.listen(PORT, () => {
-  console.log(`🚀 Server listening on http://localhost:${PORT}`);
+httpServer.listen({ port: PORT, host: "0.0.0.0" }, () => {
+  console.log(`🚀 Server listening on:`);
+  console.log(`→ Local:    http://localhost:${PORT}`);
+
+  const interfaces = os.networkInterfaces();
+  for (const netList of Object.values(interfaces)) {
+    if (!netList) continue;
+
+    for (const net of netList) {
+      if (net.family === "IPv4" && !net.internal) {
+        console.log(`→ Network: http://${net.address}:${PORT}`);
+      }
+    }
+  }
 });

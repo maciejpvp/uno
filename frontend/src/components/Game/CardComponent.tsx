@@ -9,7 +9,7 @@ import { ChooseColor } from "./ChooseColor";
 type CardComponentProps = {
   card: Card;
   isMyTurn?: boolean;
-  size?: "sm" | "md" | "lg";
+  size?: "xs" | "sm" | "md" | "lg";
   top?: number;
   left?: number;
 };
@@ -64,6 +64,7 @@ export const CardComponent = ({
     typeof size,
     { card: string; icon: string; text: string }
   > = {
+    xs: { card: "w-10 h-14", icon: "w-4 h-4", text: "text-lg" },
     sm: { card: "w-14 h-20", icon: "w-6 h-6", text: "text-xl" },
     md: { card: "w-20 h-28", icon: "w-10 h-10", text: "text-3xl" },
     lg: { card: "w-28 h-40", icon: "w-14 h-14", text: "text-5xl" },
@@ -110,25 +111,52 @@ export const CardComponent = ({
     switch (card.value) {
       case "skip":
         return <SkipForward className={currentSize.icon} />;
+
       case "reverse":
         return <RefreshCcw className={currentSize.icon} />;
+
       case "draw-two":
         return (
           <div className="flex items-center gap-1">
             <Plus
-              className={`${size === "sm" ? "w-4 h-4" : size === "lg" ? "w-8 h-8" : "w-6 h-6"}`}
+              className={`${
+                size === "xs"
+                  ? "w-3 h-3"
+                  : size === "sm"
+                    ? "w-4 h-4"
+                    : size === "lg"
+                      ? "w-8 h-8"
+                      : "w-6 h-6"
+              }`}
             />
             <span
-              className={`${size === "sm" ? "text-sm" : size === "lg" ? "text-2xl" : "text-lg"} font-bold`}
+              className={`${
+                size === "xs"
+                  ? "text-xs"
+                  : size === "sm"
+                    ? "text-sm"
+                    : size === "lg"
+                      ? "text-2xl"
+                      : "text-lg"
+              } font-bold`}
             >
               2
             </span>
           </div>
         );
+
       case "wild":
         return (
           <div
-            className={`grid grid-cols-2 gap-1 ${size === "sm" ? "w-8 h-8" : size === "lg" ? "w-16 h-16" : "w-12 h-12"}`}
+            className={`grid grid-cols-2 gap-1 ${
+              size === "xs"
+                ? "w-6 h-6"
+                : size === "sm"
+                  ? "w-8 h-8"
+                  : size === "lg"
+                    ? "w-16 h-16"
+                    : "w-12 h-12"
+            }`}
           >
             <div className="rounded-sm bg-red-500" />
             <div className="rounded-sm bg-green-500" />
@@ -136,11 +164,20 @@ export const CardComponent = ({
             <div className="rounded-sm bg-yellow-400" />
           </div>
         );
+
       case "wild-draw-four":
         return (
           <div className="flex flex-col items-center">
             <div
-              className={`grid grid-cols-2 gap-0.5 mb-1 ${size === "sm" ? "w-6 h-6" : size === "lg" ? "w-14 h-14" : "w-10 h-10"}`}
+              className={`grid grid-cols-2 gap-0.5 mb-1 ${
+                size === "xs"
+                  ? "w-4 h-4"
+                  : size === "sm"
+                    ? "w-6 h-6"
+                    : size === "lg"
+                      ? "w-14 h-14"
+                      : "w-10 h-10"
+              }`}
             >
               <div className="rounded-sm bg-red-500" />
               <div className="rounded-sm bg-green-500" />
@@ -149,16 +186,33 @@ export const CardComponent = ({
             </div>
             <div className="flex items-center gap-1">
               <Plus
-                className={`${size === "sm" ? "w-3 h-3" : size === "lg" ? "w-6 h-6" : "w-5 h-5"}`}
+                className={`${
+                  size === "xs"
+                    ? "w-2.5 h-2.5"
+                    : size === "sm"
+                      ? "w-3 h-3"
+                      : size === "lg"
+                        ? "w-6 h-6"
+                        : "w-5 h-5"
+                }`}
               />
               <span
-                className={`${size === "sm" ? "text-sm" : size === "lg" ? "text-xl" : "text-md"} font-bold`}
+                className={`${
+                  size === "xs"
+                    ? "text-xs"
+                    : size === "sm"
+                      ? "text-sm"
+                      : size === "lg"
+                        ? "text-xl"
+                        : "text-md"
+                } font-bold`}
               >
                 4
               </span>
             </div>
           </div>
         );
+
       default:
         return (
           <span className={`${currentSize.text} font-extrabold`}>
@@ -171,18 +225,21 @@ export const CardComponent = ({
   return (
     <div
       ref={ref}
-      className={`absolute flex flex-col items-center `}
+      className={`absolute flex flex-col items-center transition-all duration-500`}
       style={{ top: top, left: left }}
     >
       <button
         disabled={!isMyTurn || !canPlay}
         onClick={handlePlayCard}
+        style={{
+          transition: "transform 1500ms ease-in-out, all 200ms ease-in-out",
+        }}
         className={`${currentSize.card} rounded-2xl flex items-center justify-center 
                     text-white shadow-xl border-4 border-white
                     bg-gradient-to-br ${bgGradient}
                     transform transition-transform duration-200 ease-in-out
                     hover:scale-110 active:scale-95
-                    ${!isMyTurn || !canPlay ? "opacity-40 cursor-not-allowed" : ""}`}
+                    ${!isMyTurn || !canPlay ? "opacity-40 cursor-not-allowed" : ""} card`}
       >
         <div className="drop-shadow-lg">{renderValue()}</div>
       </button>
