@@ -29,9 +29,13 @@ export const GamePage = () => {
     const handleCardPlayed: ServerToClientEvents["cardPlayed"] = (data) => {
       const state = useGameStore.getState();
 
-      state.setDiscardPile([...state.discardPile, data.card]);
       state.setCurrentTurn(data.currentTurn);
       state.setHand(data.hand);
+
+      // Hard-coded 600ms slide animation (i know i will regret it later)
+      setTimeout(() => {
+        state.setDiscardPile([...state.discardPile, data.card]);
+      }, 600);
 
       const updatedPlayers = data.players.map((p) => {
         const existing = state.players.find((pl) => pl.id === p.id);
