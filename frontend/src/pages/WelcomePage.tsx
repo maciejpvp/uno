@@ -1,16 +1,21 @@
-import CodeInput from "../components/CodeInput";
+import { useRef } from "react";
+import CodeInput, { type CodeInputHandle } from "../components/CodeInput";
 import { CreateLobbyButton } from "../components/CreateLobbyButton";
 import { useGameStore } from "../store/gameStore";
 import { useSocketStore } from "../store/socketStore";
 
 export const WelcomePage = () => {
   const socket = useSocketStore((store) => store.socket);
+  const codeInputRef = useRef<CodeInputHandle>(null);
 
   const handleJoinLobby = (val: number) => {
     if (!socket?.active) return;
 
     socket.emit("joinLobby", val, (res) => {
-      if (!res.success) return;
+      if (!res.success) {
+        codeInputRef.current?.reset();
+        return;
+      }
 
       const lobby = res.data;
 
@@ -36,7 +41,10 @@ export const WelcomePage = () => {
         <label className="text-violet-300 text-sm font-medium">
           Enter Game Code
         </label>
-        <CodeInput callback={(val) => handleJoinLobby(Number(val))} />
+        <CodeInput
+          ref={codeInputRef}
+          callback={(val) => handleJoinLobby(Number(val))}
+        />
       </div>
       <CreateLobbyButton />
     </div>
