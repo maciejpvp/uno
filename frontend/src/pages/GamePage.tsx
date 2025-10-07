@@ -116,44 +116,63 @@ export const GamePage = () => {
             top={isMobile ? -30 : -110}
             left={isMobile ? -28 : -56}
           />
-          <button
-            className="bg-purple-950 text-purple-100 p-2 rounded-md absolute text-nowrap top-15 w-26 active:scale-110 transition-transform"
-            onClick={handleDrawCard}
-          >
-            Draw Card
-          </button>
+          {isMyTurn && isMobile && (
+            <button
+              className="bg-purple-950 text-purple-100 p-2 rounded-md absolute text-nowrap top-15 w-26 active:scale-110 transition-transform"
+              onClick={handleDrawCard}
+            >
+              Draw Card
+            </button>
+          )}
         </div>
 
-        {top && (
-          <div className="w-auto">
-            <BackHand
-              username={top.username}
-              cardCount={top.cardCount}
-              highlight={players[currentTurn]?.id === top.id}
-              orientation="top"
-            />
-          </div>
+        {!isMobile && (
+          <>
+            {top && (
+              <div className="w-auto">
+                <BackHand
+                  username={top.username}
+                  cardCount={top.cardCount}
+                  highlight={players[currentTurn]?.id === top.id}
+                  orientation="top"
+                />
+              </div>
+            )}
+
+            <div className="flex flex-1 w-full items-center justify-between">
+              {left && (
+                <BackHand
+                  username={left.username}
+                  cardCount={left.cardCount}
+                  highlight={players[currentTurn]?.id === left.id}
+                  orientation="left"
+                />
+              )}
+
+              {right && (
+                <BackHand
+                  username={right.username}
+                  cardCount={right.cardCount}
+                  highlight={players[currentTurn]?.id === right.id}
+                  orientation="right"
+                />
+              )}
+            </div>
+          </>
         )}
 
-        <div className="flex flex-1 w-full items-center justify-between">
-          {left && (
-            <BackHand
-              username={left.username}
-              cardCount={left.cardCount}
-              highlight={players[currentTurn]?.id === left.id}
-              orientation="left"
-            />
-          )}
-
-          {right && (
-            <BackHand
-              username={right.username}
-              cardCount={right.cardCount}
-              highlight={players[currentTurn]?.id === right.id}
-              orientation="right"
-            />
-          )}
-        </div>
+        {isMobile && (
+          <div className="absolute">
+            {players.map((p) => {
+              if (p.id === socket?.id) return null;
+              return (
+                <div className="bg-purple-700 text-purple-100 p-2 rounded-md">
+                  {p.username} {p.cardCount}
+                </div>
+              );
+            })}
+          </div>
+        )}
 
         <div className="flex flex-col items-center">
           <p

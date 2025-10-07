@@ -70,10 +70,11 @@ export const App = () => {
         {inGame && (
           <button
             onClick={leaveLobby}
-            className="group fixed bottom-4 left-4 flex items-center  overflow-hidden rounded-full bg-red-500 text-white shadow-lg transition-all duration-300 w-12 h-12 hover:w-28 hover:bg-red-600 cursor-pointer hover:-translate-y-[2px]"
+            className="group fixed bottom-4 left-4 flex items-center overflow-hidden rounded-full bg-red-500 text-white shadow-lg transition-all duration-300 
+  w-10 h-10 sm:w-12 sm:h-12 hover:sm:w-28 hover:bg-red-600 cursor-pointer hover:-translate-y-[2px]"
           >
-            <LogOut className="w-5 h-5 absolute left-[14px] transition-all duration-300 group-hover:ml-3" />
-            <span className="ml-2 whitespace-nowrap absolute left-[42px] opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+            <LogOut className="w-4 h-4 sm:w-5 sm:h-5 absolute left-[10px] sm:left-[14px] transition-all duration-300 group-hover:ml-2 sm:group-hover:ml-3" />
+            <span className="ml-2 whitespace-nowrap absolute left-[36px] sm:left-[42px] opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-sm sm:text-base">
               Leave
             </span>
           </button>

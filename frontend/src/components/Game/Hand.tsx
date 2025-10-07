@@ -62,11 +62,6 @@ function getLayout(
   const width = Math.min((cardWidth + gap) * cardsCount, containerWidth);
   const height = (cardHeight + gap) * rows;
 
-  const doIt = window.innerHeight * 0.3; // 40dvh = 40% of viewport height
-
-  const offset = height > doIt ? height - doIt : 0;
-  setDiscardPileOffset(offset);
-
   const getCardPosition = (index: number) => {
     const row = Math.floor(index / cardsPerRow);
     const col = index % cardsPerRow;
@@ -75,11 +70,17 @@ function getLayout(
     return { top, left };
   };
 
-  const offsetY = window.innerHeight - 35 - height;
+  const offsetY = window.innerHeight + (isMobile ? 6 : -35) - height;
   const offsetX = Math.max(
     window.innerWidth / 2 - ((cardWidth + gap) * cardsCount) / 2,
     (window.innerWidth - containerWidth) / 2 + 10,
   );
+
+  const doIt = window.innerHeight * 0.3; // 40dvh = 40% of viewport height
+
+  const offset = height > doIt ? height - doIt : 0;
+
+  setDiscardPileOffset(offset);
 
   return { width, height, getCardPosition, offset };
 }
@@ -144,8 +145,8 @@ export const Hand = ({ cards, setDiscardPileOffset }: HandProps) => {
   const { width, height, getCardPosition, offset } = layout;
 
   return (
-    <div className="p-4 pt-8 overflow-y-auto custom-scrollbar bg-red-900">
-      <div style={{ width, height }} className="bg-blue-900">
+    <div className="p-4 pt-8 overflow-y-auto custom-scrollbar">
+      <div style={{ width, height }} className="">
         {renderedCards.map((card, idx) => {
           const { top, left } = getCardPosition(idx);
 
