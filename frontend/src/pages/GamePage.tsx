@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Hand } from "../components/Game/Hand";
 import { useGameStore } from "../store/gameStore";
 import { useSocketStore } from "../store/socketStore";
@@ -17,6 +17,7 @@ export const GamePage = () => {
   const socket = useSocketStore((store) => store.socket);
   const status = useGameStore((store) => store.status);
   const winner = useGameStore((store) => store.winner);
+  const drawCardCooldownRef = useRef<boolean>(false);
 
   const lastPileCard = discardPile.at(-1);
 
@@ -77,7 +78,13 @@ export const GamePage = () => {
   }, [socket]);
 
   const handleDrawCard = () => {
+    if (drawCardCooldownRef.current) return;
+
     socket?.emit("drawCard", { code: useGameStore.getState().code });
+    drawCardCooldownRef.current = true;
+    setTimeout(() => {
+      drawCardCooldownRef.current = false;
+    }, 300);
   };
 
   const handlePlayAgain = () => {
