@@ -4,7 +4,11 @@ export interface ServerToClientEvents {
   lobbyStart: (data: { hand: Card[]; pile: Card; currentTurn: number }) => void;
   lobbyReset: (data: { hand: Card[]; pile: Card; currentTurn: number }) => void;
   playerJoined: (player: PlayerType) => void;
-  playerLeft: (data: { playerId: string; players: PlayerType[] }) => void;
+  playerLeft: (data: {
+    playerId: string;
+    players: PlayerType[];
+    currentTurn: number;
+  }) => void;
   cardPlayed: (data: {
     playerId: string;
     card: Card;

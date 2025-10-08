@@ -37,6 +37,7 @@ export const App = () => {
       const newPlayers = state.players.filter((p) => p.id !== data.playerId);
 
       state.setPlayers(newPlayers);
+      state.setCurrentTurn(data.currentTurn);
     };
 
     socket.on("playerLeft", handlePlayerLeft);

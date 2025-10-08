@@ -72,7 +72,6 @@ const CodeInput = forwardRef<CodeInputHandle, CodeInputProps>(
     const handleFocus = (index: number) => {
       if (index === 0) return;
       const oneBefore = values[index - 1];
-      console.log(oneBefore);
       if (!oneBefore) {
         inputsRef.current[index - 1]?.focus();
       }

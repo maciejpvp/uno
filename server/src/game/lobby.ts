@@ -4,6 +4,7 @@ import { games } from "./state";
 import { createPlayer } from "./player";
 import { LobbyType, PlayerType } from "../../../shared/types/types";
 import { AppServer, AppSocket } from "..";
+import { getNextTurn } from "./gameplay";
 
 const generateLobbyCode = (): number => {
   let lobbyId: number;
@@ -161,6 +162,11 @@ export const playerLeave = ({
   const lobby = games.get(code);
   if (!lobby) return;
 
+  // Was this player turn -> go to next player turn
+  if (lobby.players[lobby.currentTurn]?.id === playerId) {
+    lobby.currentTurn = getNextTurn(lobby, 1);
+  }
+
   lobby.players = lobby.players.filter((p) => p.id !== playerId);
 
   if (lobby.players.length === 0) {
@@ -175,7 +181,11 @@ export const playerLeave = ({
 
   socket.leave(lobby.id);
 
-  io.to(lobby.id).emit("playerLeft", { playerId, players: lobby.players });
+  io.to(lobby.id).emit("playerLeft", {
+    playerId,
+    players: lobby.players,
+    currentTurn: lobby.currentTurn,
+  });
 
   games.set(code, lobby);
 

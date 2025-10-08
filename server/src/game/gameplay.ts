@@ -8,7 +8,7 @@ const isPlayerTurn = (data: { lobby: LobbyType; id: string }): boolean => {
   return currentPlayer.id === data.id;
 };
 
-const getNextTurn = (lobby: LobbyType, steps: number) => {
+export const getNextTurn = (lobby: LobbyType, steps: number) => {
   const { players, currentTurn, direction } = lobby;
   return (currentTurn + steps * direction + players.length) % players.length;
 };

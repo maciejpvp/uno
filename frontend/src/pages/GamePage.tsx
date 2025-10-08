@@ -173,11 +173,14 @@ export const GamePage = () => {
         )}
 
         {isMobile && (
-          <div className="absolute">
+          <div className="absolute flex flex-wrap max-w-[90dvw] gap-1">
             {players.map((p) => {
               if (p.id === socket?.id) return null;
+              const isPlayerTurn = players[currentTurn]?.id === p.id;
               return (
-                <div className="bg-purple-700 text-purple-100 p-2 rounded-md">
+                <div
+                  className={`text-purple-100 p-2 rounded-md ${isPlayerTurn ? "bg-purple-600" : "bg-purple-700"}`}
+                >
                   {p.username} {p.cardCount}
                 </div>
               );
